@@ -112,7 +112,7 @@ def cmd_lmute(word, word_eol, userdata):
     return hexchat.EAT_ALL
 
 
-def msg_callback(word, word_eol, userdata, attributes):
+def on_print_attrs(word, word_eol, userdata, attributes):
     """Examine the message and alter the output if the sender is muted.
 
     :param word: List of message parts
@@ -124,11 +124,11 @@ def msg_callback(word, word_eol, userdata, attributes):
     global mute_color
     global muted
     # nick, text, mode, identified text (highlight)
-    word = [(word[i] if len(word) > i else '') for i in range(4)]
+    word = [(hexchat.strip(word[i]) if len(word) > i else '') for i in range(4)]
     for pat in muted:
         if fnmatch.fnmatch(word[0], pat):
-            clean = [hexchat.strip(w) for w in word]
-            hexchat.prnt('\003' + mute_color + events[userdata].format(*clean))
+            hexchat.prnt(
+                '\003{}'.format(mute_color) + events[userdata].format(*word))
             return hexchat.EAT_ALL
     return hexchat.EAT_NONE
 
@@ -139,4 +139,6 @@ hexchat.hook_command('MUTE', cmd_mute, help=cmd_mute.__doc__)
 hexchat.hook_command('UNMUTE', cmd_unmute, help=cmd_unmute.__doc__)
 hexchat.hook_command('LMUTE', cmd_lmute, help=cmd_lmute.__doc__)
 for event in events.keys():
-    hexchat.hook_print_attrs(event, msg_callback, event)
+    hexchat.hook_print_attrs(event, on_print_attrs, event)
+hexchat.prnt('{0} {1} by {2} loaded.'.format(
+    __module_name__, __module_version__, __module_author__))
