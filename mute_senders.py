@@ -16,7 +16,6 @@
 """De-empahasize messages from some senders"""
 import fnmatch
 import hexchat
-import sys
 
 
 __module_name__ = 'mute_senders'
@@ -27,7 +26,6 @@ __module_description__ = 'De-empahasize messages from some senders'
 muted = []
 mute_color = '21'
 
-hooks = []
 events = {
     'Channel Action': '\035\t• {0} {1}',
     'Channel Action Highlight': '\035\t• {0} {1}',
